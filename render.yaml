@@ -1,0 +1,36 @@
+# Blueprint de Render: Dashboard > New > Blueprint > seleccionar el repositorio
+services:
+  # Aplicación web (Next.js: frontend + API)
+  - type: web
+    name: checklist-operativo
+    runtime: node
+    region: oregon
+    plan: free               # starter evita que el servicio se suspenda tras 15 min sin tráfico
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /login
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDGRID_FROM_EMAIL
+        sync: false
+      - key: SENDGRID_FROM_NAME
+        value: Check List Operativo
+      - key: APP_TIMEZONE
+        value: America/Lima
+      - key: CRON_SECRET
+        generateValue: true
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+
+# El motor de frecuencias/alertas corre cada minuto dentro de Supabase con pg_cron
+# (job 'motor-checklists'), por lo que no se necesita un Cron Job de Render.
